@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   margin-top: 4rem;
+  overflow-x: auto;
 
   table {
     width: 100%;
@@ -21,6 +22,9 @@ export const Container = styled.div`
       background: var(--shape);
       color: var(--text-body);
       border-radius: 0.25rem;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
 
       &:first-child {
         color: var(--text-title);
