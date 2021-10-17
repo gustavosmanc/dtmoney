@@ -54,14 +54,13 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   .react-modal-overlay {
-    background: rgba(0, 0, 0, 0.5);
-
-    position: fixed;
-    top: 0;
     bottom: 0;
-    right: 0;
     left: 0;
+    right: 0;
+    top: 0;
 
+    background: rgba(0, 0, 0, 0.5);
+    position: fixed;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -72,8 +71,15 @@ export const GlobalStyle = createGlobalStyle`
     max-width: 576px;
     background: var(--background);
     padding: 3rem;
-    position: relative;
-    border-radius: 0.25rem;
+    position: absolute;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    bottom: 0;
+
+    @media only screen and (min-width: 768px) {
+      position: relative;
+      border-radius: 0.25rem;
+    }
   }
 
   .react-modal-close {
