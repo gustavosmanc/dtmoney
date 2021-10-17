@@ -4,7 +4,8 @@ export const Container = styled.div`
   display: grid;
   grid-template-columns: repeat(3, minmax(300px, 1fr));
   gap: 2rem;
-  margin-top: -7rem;
+  margin: -7rem -1rem 0 -1rem;
+  padding: 0 1rem;
   overflow-x: auto;
 
   ::-webkit-scrollbar {
