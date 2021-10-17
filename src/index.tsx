@@ -37,6 +37,14 @@ createServer({
     this.post('/transactions', (schema, request) =>
       schema.create('transaction', JSON.parse(request.requestBody)),
     );
+
+    this.delete('/transactions/:id', (schema, request) => {
+      let id = request.params.id;
+
+      schema.db.transactions.remove(id);
+
+      return this.schema.all('transaction');
+    });
   },
 });
 
