@@ -10,8 +10,13 @@ export const Content = styled.div`
 
   padding: 2rem 1rem 12rem;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+
+  @media only screen and (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 
   button {
     font-size: 1rem;
@@ -21,8 +26,13 @@ export const Content = styled.div`
     padding: 0 2rem;
     border-radius: 0.25rem;
     height: 3rem;
+    margin-top: 1.5rem;
 
     transition: filter 0.2s;
+
+    @media only screen and (min-width: 768px) {
+      margin-top: 0;
+    }
 
     &:hover {
       filter: brightness(0.9);
