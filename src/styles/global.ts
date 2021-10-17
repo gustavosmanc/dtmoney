@@ -68,7 +68,6 @@ export const GlobalStyle = createGlobalStyle`
 
   .react-modal-content {
     width: 100%;
-    max-width: 576px;
     background: var(--background);
     padding: 3rem;
     position: absolute;
@@ -79,6 +78,7 @@ export const GlobalStyle = createGlobalStyle`
     @media only screen and (min-width: 768px) {
       position: relative;
       border-radius: 0.25rem;
+      max-width: 576px;
     }
   }
 
