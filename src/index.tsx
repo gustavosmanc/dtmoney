@@ -15,6 +15,7 @@ createServer({
           category: 'Web Development',
           amount: 6000,
           createdAt: new Date('2021-02-12 09:00:00'),
+          updatedAt: new Date('2021-02-12 09:00:00'),
         },
         {
           id: 2,
@@ -23,6 +24,7 @@ createServer({
           category: 'House',
           amount: 1100,
           createdAt: new Date('2021-02-14 11:00:00'),
+          updatedAt: new Date('2021-02-14 11:00:00'),
         },
       ],
     });
@@ -30,20 +32,27 @@ createServer({
   routes() {
     this.namespace = 'api';
 
-    this.get('/transactions', () => {
-      return this.schema.all('transaction');
-    });
+    this.get('/transactions', schema => schema.all('transaction'));
+
+    this.get('/transactions/:id', (schema, request) =>
+      schema.db.transactions.find(request.params.id),
+    );
 
     this.post('/transactions', (schema, request) =>
       schema.create('transaction', JSON.parse(request.requestBody)),
     );
 
+    this.put('/transactions/:id', (schema, request) =>
+      schema.db.transactions.update(
+        request.params.id,
+        JSON.parse(request.requestBody),
+      ),
+    );
+
     this.delete('/transactions/:id', (schema, request) => {
-      let id = request.params.id;
+      schema.db.transactions.remove(request.params.id);
 
-      schema.db.transactions.remove(id);
-
-      return this.schema.all('transaction');
+      return {};
     });
   },
 });

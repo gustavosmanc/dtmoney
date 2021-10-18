@@ -1,11 +1,25 @@
 import { useTransactions } from '../../hooks/useTransactions';
+import { TransactionModel } from '../../models/Transaction';
 
 import deleteImg from '../../assets/delete.svg';
 
 import { Container } from './styles';
+import { FormEvent } from 'react';
 
-export function TransactionsTable() {
+interface TransactionsTableProps {
+  onOpenTransactionModal: (transactionModel: TransactionModel) => void;
+}
+
+export function TransactionsTable({
+  onOpenTransactionModal,
+}: TransactionsTableProps) {
   const { transactions, deleteTransaction } = useTransactions();
+
+  function handleDeleteTransaction(event: FormEvent, id: number) {
+    event.stopPropagation();
+
+    deleteTransaction(id);
+  }
 
   return (
     <Container>
@@ -21,7 +35,10 @@ export function TransactionsTable() {
 
         <tbody>
           {transactions.map(transaction => (
-            <tr key={transaction.id}>
+            <tr
+              key={transaction.id}
+              onClick={() => onOpenTransactionModal(transaction)}
+            >
               <td>{transaction.title}</td>
               <td className={transaction.type}>
                 {new Intl.NumberFormat('en-US', {
@@ -41,7 +58,9 @@ export function TransactionsTable() {
                 <img
                   src={deleteImg}
                   alt="Delete transaction"
-                  onClick={() => deleteTransaction(transaction.id)}
+                  onClick={event =>
+                    handleDeleteTransaction(event, transaction.id)
+                  }
                 />
               </td>
             </tr>

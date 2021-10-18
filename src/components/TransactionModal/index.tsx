@@ -1,5 +1,5 @@
 import Modal from 'react-modal';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 
 import incomeImg from '../../assets/income.svg';
 import outcomeImg from '../../assets/outcome.svg';
@@ -7,28 +7,36 @@ import closeImg from '../../assets/close.svg';
 
 import { Container, TransactionTypeContainer, RadioBox } from './styles';
 import { useTransactions } from '../../hooks/useTransactions';
+import { TransactionModel } from '../../models/Transaction';
 
-interface NewTransactionModalProps {
+interface TransactionModalProps {
+  model?: TransactionModel;
   isOpen: boolean;
   onRequestClose: () => void;
 }
 
-export function NewTransactionModal({
+export function TransactionModal({
+  model,
   isOpen,
   onRequestClose,
-}: NewTransactionModalProps) {
-  const { createTransaction } = useTransactions();
+}: TransactionModalProps) {
+  const { createTransaction, updateTransaction } = useTransactions();
 
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState(0);
   const [type, setType] = useState('deposit');
   const [category, setCategory] = useState('');
 
-  async function handleCreateNewTransaction(event: FormEvent) {
-    event.preventDefault();
+  useEffect(() => {
+    if (model) {
+      setTitle(model.title);
+      setAmount(model.amount);
+      setType(model.type);
+      setCategory(model.category);
+    }
+  }, [model]);
 
-    await createTransaction({ title, amount, type, category });
-
+  function closeTransactionModal() {
     setTitle('');
     setAmount(0);
     setType('deposit');
@@ -37,23 +45,35 @@ export function NewTransactionModal({
     onRequestClose();
   }
 
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+
+    if (model) {
+      await updateTransaction(model.id, { title, amount, type, category });
+    } else {
+      await createTransaction({ title, amount, type, category });
+    }
+
+    closeTransactionModal();
+  }
+
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={onRequestClose}
+      onRequestClose={closeTransactionModal}
       overlayClassName="react-modal-overlay"
       className="react-modal-content"
     >
       <button
         type="button"
-        onClick={onRequestClose}
+        onClick={closeTransactionModal}
         className="react-modal-close"
       >
         <img src={closeImg} alt="Close modal" />
       </button>
 
-      <Container onSubmit={handleCreateNewTransaction}>
-        <h2>Add new transaction</h2>
+      <Container onSubmit={handleSubmit}>
+        <h2>{model ? `Editing ${model.title}` : 'Add new transaction'}</h2>
 
         <input
           type="text"

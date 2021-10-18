@@ -1,12 +1,21 @@
+import { TransactionModel } from '../../models/Transaction';
 import { Summary } from '../Summary';
 import { TransactionsTable } from '../TransactionsTable';
 import { Container } from './styles';
 
-export function Dashboard() {
+interface DashboardProps {
+  onOpenTransactionModal: (transactionModel: TransactionModel) => void;
+}
+
+export function Dashboard({ onOpenTransactionModal }: DashboardProps) {
   return (
     <Container>
       <Summary />
-      <TransactionsTable />
+      <TransactionsTable
+        onOpenTransactionModal={transactionModel =>
+          onOpenTransactionModal(transactionModel)
+        }
+      />
     </Container>
   );
 }

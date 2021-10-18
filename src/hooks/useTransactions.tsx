@@ -14,9 +14,10 @@ interface Transaction {
   type: string;
   category: string;
   createdAt: string;
+  updatedAt: string;
 }
 
-type TransactionInput = Omit<Transaction, 'id' | 'createdAt'>;
+type TransactionInput = Omit<Transaction, 'id' | 'createdAt' | 'updatedAt'>;
 
 interface TransactionsProviderProps {
   children: ReactNode;
@@ -25,6 +26,10 @@ interface TransactionsProviderProps {
 interface TransactionsContextData {
   transactions: Transaction[];
   createTransaction: (transaction: TransactionInput) => Promise<void>;
+  updateTransaction: (
+    id: number,
+    transaction: TransactionInput,
+  ) => Promise<void>;
   deleteTransaction: (id: number) => Promise<void>;
 }
 
@@ -45,21 +50,46 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
     const response = await api.post('/transactions', {
       ...transactionInput,
       createdAt: new Date(),
+      updatedAt: new Date(),
     });
     const { transaction } = response.data;
 
     setTransactions([...transactions, transaction]);
   }
 
-  async function deleteTransaction(id: number) {
-    const response = await api.delete(`/transactions/${id}`);
+  async function updateTransaction(
+    id: number,
+    transactionInput: TransactionInput,
+  ) {
+    const response = await api.put(`/transactions/${id}`, {
+      ...transactionInput,
+      updatedAt: new Date(),
+    });
 
-    setTransactions(response.data.transactions);
+    const { data: updatedTransaction } = response;
+
+    setTransactions([
+      ...transactions.filter(
+        transaction => transaction.id !== updatedTransaction.id,
+      ),
+      updatedTransaction,
+    ]);
+  }
+
+  async function deleteTransaction(id: number) {
+    await api.delete(`/transactions/${id}`);
+
+    setTransactions(transactions.filter(transaction => transaction.id !== id));
   }
 
   return (
     <TransactionsContext.Provider
-      value={{ transactions, createTransaction, deleteTransaction }}
+      value={{
+        transactions,
+        createTransaction,
+        updateTransaction,
+        deleteTransaction,
+      }}
     >
       {children}
     </TransactionsContext.Provider>
